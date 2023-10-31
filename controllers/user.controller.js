@@ -2,16 +2,28 @@ const { UserModel } = require('../models/User.model');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 require('dotenv').config();
+
 const signup = async(req, res, next) => {
     try {
         const { username, password, firstName, lastName, email } = req.body;
         const existingUser = await UserModel.findOne({ username });
         if (existingUser) {
-            return res.status(400).json({ message: "The user already exists" })
+            return res.status(400).json({ message: "Username already exists" })
         }
         const newUser = await UserModel.create({ username, password, firstName, lastName, email: { email } })
         const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY, { expiresIn: "24h" });
-        res.status(201).json({ username, token })
+        const option = {
+            expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+            httpOnly: true
+        }
+        res.status(201).cookie("token", token, option).json({
+            token: token,
+            success: true,
+            data: {
+                username: existingUser.username,
+                email: existingUser.email
+            }
+        })
     } catch (error) {
         next(error);
     }
