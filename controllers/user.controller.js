@@ -6,6 +6,7 @@ require('dotenv').config();
 const signup = async(req, res, next) => {
     try {
         const { username, password, firstName, lastName, email } = req.body;
+        console.log(req.body);
         const existingUser = await UserModel.findOne({ username });
         if (existingUser) {
             return res.status(400).json({ message: "Username already exists" })
@@ -19,10 +20,6 @@ const signup = async(req, res, next) => {
         res.status(201).cookie("token", token, option).json({
             token: token,
             success: true,
-            data: {
-                username: existingUser.username,
-                email: existingUser.email
-            }
         })
     } catch (error) {
         next(error);

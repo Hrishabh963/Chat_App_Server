@@ -7,7 +7,6 @@ const EmailSchema = new mongoose.Schema({
         trim: true,
         lowercase: true,
         required: true,
-
     }
 });
 
@@ -31,12 +30,11 @@ const User = new mongoose.Schema({
         type: String,
         required: true
     },
-    chatrooms: {
-        type: [chatRoomSchema],
-        default: []
-    }
+    chatrooms: [{
+        type: mongoose.Schema.Types.ObjectId, // Reference to ChatRoom
+        ref: 'ChatRoom', // Reference to the ChatRoom model
+    }],
 }, {
     timestamps: true,
 })
-module.exports.UserSchema = User;
 module.exports.UserModel = mongoose.model('User', User);

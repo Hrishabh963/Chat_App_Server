@@ -6,6 +6,7 @@ const cors = require('cors');
 const { userRouter } = require('../routes/user.route');
 const cookieParser = require('cookie-parser');
 const { homeRouter } = require('../routes/home.route');
+const { chatRoomRouter } = require('../routes/chatroom.route');
 //Configuring middlewares
 app.use(logger('dev'));
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use(cookieParser())
 //Setting up routes
 app.use('/user', userRouter);
 app.use('/home', homeRouter);
+app.use('/chatroom', chatRoomRouter);
 
 //Error handlers
 app.use(errorLogger);
