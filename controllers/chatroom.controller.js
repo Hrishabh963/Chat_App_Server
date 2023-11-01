@@ -3,21 +3,21 @@ const { UserModel } = require("../models/User.model");
 
 const postChatroom = async(req, res, next) => {
     try {
-        const { title, description } = req.body;
+        const { name, description } = req.body;
         const userId = req.user.id;
         const exisitingUser = await UserModel.findById(userId);
         if (!exisitingUser) {
             return res.status(400).json({ message: "Invalid user" });
         }
         const newChatroom = await ChatRoom.create({
-            name: title,
+            name: name,
             description: description,
             users: [userId],
             owner: userId
         })
         exisitingUser.chatrooms.push(newChatroom._id);
         await exisitingUser.save();
-        return res.status(201).json({ name: newChatroom.name, description: newChatroom.description, id: newChatroom._id });
+        return res.status(201).json(newChatroom);
     } catch (error) {
         next(error);
     }
