@@ -13,6 +13,7 @@ const signup = async(req, res, next) => {
         }
         const newUser = await UserModel.create({ username, password, firstName, lastName, email: { email } })
         const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY, { expiresIn: "24h" });
+        newUser.password = undefined;
         const option = {
             expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
             httpOnly: true
@@ -20,6 +21,7 @@ const signup = async(req, res, next) => {
         res.status(201).cookie("token", token, option).json({
             token: token,
             success: true,
+            data: newUser
         })
     } catch (error) {
         next(error);
@@ -34,6 +36,7 @@ const login = async(req, res, next) => {
             return res.status(400).json({ message: "Invalid username or password" });
         }
         if (existingUser && (await bcrypt.compare(password, existingUser.password))) {
+            existingUser.password = undefined;
             const token = jwt.sign({ id: existingUser._id }, process.env.SECRET_KEY, { expiresIn: "24h" });
             const option = {
                 expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
@@ -42,10 +45,7 @@ const login = async(req, res, next) => {
             res.status(200).cookie("token", token, option).json({
                 token: token,
                 success: true,
-                data: {
-                    username: existingUser.username,
-                    email: existingUser.email
-                }
+                data: existingUser
             })
         } else {
             return res.status(400).json({ message: "Invalid username or password" });

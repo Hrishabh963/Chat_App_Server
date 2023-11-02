@@ -36,7 +36,7 @@ const joinChatRoom = async(req, res, next) => {
     try {
         const { chatRoomId } = req.params;
         const userId = req.user.id;
-
+        console.log(chatRoomId, userId);
         // Check if the user is already a member of the chat room
         const user = await UserModel.findById(userId);
         if (user.chatrooms.includes(chatRoomId)) {
@@ -63,4 +63,23 @@ const joinChatRoom = async(req, res, next) => {
     }
 }
 
-module.exports = { postChatroom, getAllChatrooms, joinChatRoom }
+const getAllMembers = async(req, res, next) => {
+    const { chatRoomId } = req.params;
+    try {
+        const chatroom = await ChatRoom.findById(chatRoomId);
+        const users = chatroom.users;
+        const membersData = await Promise.all(users.map(async(userId) => {
+            const member = await UserModel.findById(userId);
+            return member;
+        }));
+        const mappedData = membersData.map((member) => {
+            const { password, ...rest } = member._doc;
+            return rest;
+        });
+        res.status(200).json(mappedData);
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports = { postChatroom, getAllChatrooms, joinChatRoom, getAllMembers }
