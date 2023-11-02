@@ -7,6 +7,9 @@ const { userRouter } = require('../routes/user.route');
 const cookieParser = require('cookie-parser');
 const { homeRouter } = require('../routes/home.route');
 const { chatRoomRouter } = require('../routes/chatroom.route');
+const { messageRouter } = require('../routes/message.route');
+
+
 //Configuring middlewares
 app.use(logger('dev'));
 app.use(express.json());
@@ -18,6 +21,7 @@ app.use(cookieParser())
 app.use('/user', userRouter);
 app.use('/home', homeRouter);
 app.use('/chatroom', chatRoomRouter);
+app.use('/message', messageRouter)
 
 //Error handlers
 app.use(errorLogger);
