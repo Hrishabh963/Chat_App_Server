@@ -5,10 +5,9 @@ const app = express();
 const cors = require('cors');
 const { userRouter } = require('../routes/user.route');
 const cookieParser = require('cookie-parser');
-const { homeRouter } = require('../routes/home.route');
 const { chatRoomRouter } = require('../routes/chatroom.route');
 const { messageRouter } = require('../routes/message.route');
-
+require('dotenv').config()
 
 //Configuring middlewares
 app.use(logger('dev'));
@@ -24,7 +23,7 @@ const { Server } = require('socket.io');
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: process.env.FRONT_END_URL,
         methods: ["GET", "POST"]
     }
 });
@@ -32,7 +31,6 @@ const io = new Server(server, {
 
 //Setting up routes
 app.use('/user', userRouter);
-app.use('/home', homeRouter);
 app.use('/chatroom', chatRoomRouter);
 app.use('/message', messageRouter)
 
