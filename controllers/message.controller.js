@@ -9,9 +9,11 @@ const postMessage = async(req, res, next) => {
     try {
         const chatroom = await ChatRoom.findById(chatroomId);
         const message = await Message.create({ text, user: userId })
+        const user = await UserModel.findById(userId);
         chatroom.messages.push(message._id);
         await chatroom.save();
-        res.status(201).json(message);
+        user.password = undefined;
+        res.status(201).json({ message, user });
 
     } catch (error) {
         next(error);

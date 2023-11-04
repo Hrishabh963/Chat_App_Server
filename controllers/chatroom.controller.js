@@ -23,6 +23,16 @@ const postChatroom = async(req, res, next) => {
     }
 }
 
+const getCurrentChatroom = async(req, res, next) => {
+    const { chatroomId } = req.params;
+    try {
+        const currentChatroom = await ChatRoom.findById(chatroomId);
+        res.staus(200).json(currentChatroom);
+    } catch (error) {
+        next(error);
+    }
+}
+
 const getAllChatrooms = async(req, res, next) => {
     try {
         const chatRooms = await ChatRoom.find({});
@@ -82,4 +92,4 @@ const getAllMembers = async(req, res, next) => {
     }
 }
 
-module.exports = { postChatroom, getAllChatrooms, joinChatRoom, getAllMembers }
+module.exports = { postChatroom, getAllChatrooms, joinChatRoom, getAllMembers, getCurrentChatroom }
